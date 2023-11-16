@@ -1,9 +1,10 @@
 import os
+import binascii
 
 directory = str(input("Quel répertoire dois-je analyser ? "))
 
 class Tree:
-    def __init__(self, path: str, depth: int, name: str):
+    def __init__(self, path: str, depth: int, name: str, crc32: str):
         """
         Tree Class :
             a Tree node used for os exploration. Contains other Tree nodes.
@@ -21,6 +22,7 @@ class Tree:
         self.depth = depth
         self.path = path
         self.children = []
+        self.print = crc32
 
     def show_hierarchy(self)-> str:
         """
@@ -80,10 +82,15 @@ class Tree:
         try: 
             list_children = os.listdir(self.path)
             for i in range(len(list_children)):
-                self.children.append(Tree(self.path + "/" + list_children[i], self.depth + 1, list_children[i]))
+                self.children.append(Tree(self.path + "/" + list_children[i], self.depth + 1, list_children[i], "0"))
 
         except:
             pass
+    
+    def CRC32_from_file(self, filename):
+        buf = open(filename,'rb').read()
+        buf = (binascii.crc32(buf) & 0xFFFFFFFF)
+        return "%08X" % buf
 
     def fill_children(self):
         """
@@ -170,8 +177,46 @@ class Tree:
             sorted_list.append(elt.name)
         sorted_list.sort(key=str.lower)
         return sorted_list
+    
+    def store_files_sizes(self)-> list[(str, int)]:
+        """
+        store_files_sizes method:
+            returns a list of tuples (str(path of file), int(size of tile))
+        """
+        store_list = []
+        for elt in self.children:
+            if os.path.isdir(elt.path) == False:
+                store_list.append((elt.path, os.path.getsize(elt.path)))
+            elif os.path.isdir(elt.path) == True:
+                store_list.append(elt.store_files())
+        return store_list
 
-root = Tree(directory, 1, "")
+    def detect_duplicates(self, sizes_tuples: list)-> list[str]:
+        """
+        detect_duplicates method:
+            returns the list of duplicate files in sizes_list, if any.
+        """
+        duplicate_list = []
+        return_list = []
+        for i in range(len(sizes_tuples)-1):
+            mine = sizes_tuples[i][1]
+            for j in range(len(sizes_tuples)):
+                if i!=j and sizes_tuples[i][1] == sizes_tuples[j][1]:
+                    duplicate_list.append((sizes_tuples[i][0], sizes_tuples[j][0]))
+                    
+
+
+        for elt in duplicate_list:
+            with open(elt[0], 'rb') as f1:
+                with open(elt[1], 'rb') as f2:
+                    if f1.read(3) == f2.read(3):
+                        if self.CRC32_from_file(elt[0]) == self.CRC32_from_file(elt[1]):
+                            return_list.append((elt[0] + " et " + elt[1] + " sont des duplicatas"))
+        
+        return return_list
+            
+
+root = Tree(directory, 1, "", 0)
 
 root.fill_children()
 
@@ -180,8 +225,8 @@ root.show_hierarchy()
 continueLoop = True
 
 while continueLoop:
-    what_to_do = str(input("Que dois-je faire ? ")).split(" ")
     
+    what_to_do = str(input("Que dois-je faire ? ")).split(" ")
     
     if what_to_do[0] == "Fin" and len(what_to_do) == 1:
         continueLoop = False
@@ -208,4 +253,14 @@ while continueLoop:
 
     if what_to_do[0] == "Maxi" and len(what_to_do) == 2:
         print(root.show_maxi(int(what_to_do[1])))
+
+    if what_to_do[0] == "Dupli" and len(what_to_do) == 2:
+        if what_to_do[1] == "Show":
+            for elt in root.detect_duplicates(root.store_files_sizes()):
+                print(elt)
+                print("\n")
+                print("---------------------")
+                print("\n")
+
+    
 
