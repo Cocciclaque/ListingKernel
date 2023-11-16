@@ -1,7 +1,7 @@
+#SCHMITT Kilian - MNS, 16/11/2023, 16:05
+
 import os
 import binascii
-
-directory = str(input("Quel répertoire dois-je analyser ? "))
 
 class Tree:
     def __init__(self, path: str, depth: int, name: str, crc32: str):
@@ -214,53 +214,30 @@ class Tree:
                             return_list.append((elt[0] + " et " + elt[1] + " sont des duplicatas"))
         
         return return_list
-            
 
-root = Tree(directory, 1, "", 0)
-
-root.fill_children()
-
-root.show_hierarchy()
-
-continueLoop = True
-
-while continueLoop:
-    
-    what_to_do = str(input("Que dois-je faire ? ")).split(" ")
-    
-    if what_to_do[0] == "Fin" and len(what_to_do) == 1:
-        continueLoop = False
-
-    if what_to_do[0] == "Architecture" and len(what_to_do)==1:
-        print(root.show_hierarchy())
+    def detect_duplicates_between_two_dirs(self, sizes_tuples_dir_one: list, sizes_tuples_dir_two: list)-> list[str]:
+        """
+        detect_duplicates_between_two_dirs method:
+            returns duplicate files between two directories.
+        """
+        duplicate_list = []
+        return_list = []
+        for i in range(len(sizes_tuples_dir_one)-1):
+            for j in range(len(sizes_tuples_dir_two)):
+                if i!=j and sizes_tuples_dir_one[i][1] == sizes_tuples_dir_two[j][1]:
+                    duplicate_list.append((sizes_tuples_dir_one[i][0], sizes_tuples_dir_two[j][0]))
 
 
-    if what_to_do[0] == "Liste":
-        if what_to_do[1] == "Totale" and len(what_to_do) == 2:
-            print(root.total_list())
-        elif what_to_do[1] == "Partielle" and len(what_to_do) == 3:
-            print(root.partial_list(what_to_do[2]))
-        elif len(what_to_do) == 2 and what_to_do[1].isalpha:
-            print(root.show_one_file_extension_only("." + what_to_do[1]))
 
-    if what_to_do[0] == "SaveListe" and len(what_to_do) == 2:
-        with open(what_to_do[1], "w") as f:
-            f.write(root.total_list())
+        for elt in duplicate_list:
+            with open(elt[0], 'rb') as f1:
+                with open(elt[1], 'rb') as f2:
+                    if f1.read(3) == f2.read(3):
+                        if self.CRC32_from_file(elt[0]) == self.CRC32_from_file(elt[1]):
+                            if elt[1] not in return_list:
+                                return_list.append(elt[1])
 
-    if what_to_do[0] == "SaveArchi" and len(what_to_do) == 2:
-        with open(what_to_do[1], "w") as f:
-            f.write(root.show_hierarchy())
+        return return_list
 
-    if what_to_do[0] == "Maxi" and len(what_to_do) == 2:
-        print(root.show_maxi(int(what_to_do[1])))
 
-    if what_to_do[0] == "Dupli" and len(what_to_do) == 2:
-        if what_to_do[1] == "Show":
-            for elt in root.detect_duplicates(root.store_files_sizes()):
-                print(elt)
-                print("\n")
-                print("---------------------")
-                print("\n")
-
-    
 
