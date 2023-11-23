@@ -40,7 +40,7 @@ class Tree:
             return_list += str_construct
             return_list += elt.show_hierarchy()
         return return_list
-    
+
     def show_one_file_extension_only(self, e: str)-> str:
         """
         show_one_file_extension_only method:
@@ -86,7 +86,7 @@ class Tree:
 
         except:
             pass
-    
+
     def CRC32_from_file(self, filename):
         buf = open(filename,'rb').read()
         buf = (binascii.crc32(buf) & 0xFFFFFFFF)
@@ -131,7 +131,7 @@ class Tree:
         for elt in self.children:
             return_list += elt.partial_list(r)
         return return_list
-            
+
     def show_sort_directory_by_size(self)-> list[str]:
         """
         show_sort_directory_by_size method :
@@ -145,7 +145,7 @@ class Tree:
         for elt in size_list:
             sorted_list.append(elt[1])
         return sorted_list
-        
+
     def show_maxi(self, m: int)-> str:
         """
         show_maxi method :
@@ -177,7 +177,7 @@ class Tree:
             sorted_list.append(elt.name)
         sorted_list.sort(key=str.lower)
         return sorted_list
-    
+
     def store_files_sizes(self)-> list[(str, int)]:
         """
         store_files_sizes method:
@@ -203,7 +203,6 @@ class Tree:
             for j in range(len(sizes_tuples)):
                 if i!=j and sizes_tuples[i][1] == sizes_tuples[j][1]:
                     duplicate_list.append((sizes_tuples[i][0], sizes_tuples[j][0]))
-                    
 
 
         for elt in duplicate_list:

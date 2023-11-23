@@ -15,7 +15,6 @@ compareTree = Tree(directory2, 1, "", 0)
 compareTree.fill_children()
 
 print(root.detect_duplicates_between_two_dirs(root.store_files_sizes(), compareTree.store_files_sizes()))
-print("\n")
 print("sont en double, et à supprimer.")
-    
+
 
