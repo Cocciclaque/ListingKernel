@@ -1,5 +1,5 @@
 # ListingKernel
-Le projet de listing et de shell de M. Nivoix
+Le projet de listing et de shell de mon formateur
 
 
 Comment utiliser :
