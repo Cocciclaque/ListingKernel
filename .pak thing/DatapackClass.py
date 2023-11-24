@@ -88,7 +88,6 @@ class Datapack():
     
     def read_lines(self):
         for i in range(len(self.files_to_encode)):
-            print(self.read_line_info(i))
     
     def read_word(self, file, byte_start, byte_finish):
         return str(self.bin_to_str(self.read_multiple_bytes(str(self.t)+".pak",byte_start, byte_finish)))
@@ -104,7 +103,6 @@ class Datapack():
         self.positions[0] = 6+(len(self.files_to_encode)*48)
         for i in range(1, len(self.files_to_encode)):
             self.positions[i] = self.positions[i-1]+os.path.getsize(self.files_to_encode[i-1])
-        print(self.positions)
 
 
     def writefilescontents(self):
@@ -125,10 +123,8 @@ class Datapack():
                     contents.append(self.read_word(self.t+".pak", self.positions[i], len(f.read())))
         return contents
     
-file = Datapack("MNS", 1, ["Sample.txt", "Sample2.txt", "Sample3.txt"])
+file = Datapack("MNS", 1, [r".pak thing\Sample.txt", r".pak thing\Sample2.txt", r".pak thing\Sample3.txt"])
 
 file.makefile()
-
-print(file.read_contents())
 
 
