@@ -88,7 +88,8 @@ class Datapack():
     
     def read_lines(self):
         for i in range(len(self.files_to_encode)):
-    
+            # print(self.read_line_info(i))
+
     def read_word(self, file, byte_start, byte_finish):
         return str(self.bin_to_str(self.read_multiple_bytes(str(self.t)+".pak",byte_start, byte_finish)))
         
@@ -126,5 +127,6 @@ class Datapack():
 file = Datapack("MNS", 1, [r".pak thing\Sample.txt", r".pak thing\Sample2.txt", r".pak thing\Sample3.txt"])
 
 file.makefile()
+
 
 
