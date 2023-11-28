@@ -1,1 +1,7 @@
 I am gay this time TWICE
+
+
+
+
+while True:
+    time += delta
